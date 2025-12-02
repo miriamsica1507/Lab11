@@ -14,6 +14,14 @@ class Model:
         :param year: anno limite fino al quale selezionare le connessioni da includere.
         """
         # TODO
+        rifugi_filtrati = DAO.get_rifugio_anno(year)
+        self.G.clear()
+        # devo verificare che i vari nodi che prendo siano uguali o id_rifugio1 o id_rifugio2, con un if e si avrà una connessione
+        for r in rifugi_filtrati:
+            u = r.id_rifugio1
+            v = r.id_rifugio2
+            self.G.add_edge(u, v)
+
 
     def get_nodes(self):
         """
@@ -55,3 +63,11 @@ class Model:
         """
 
         # TODO
+    def get_reachable_bfs_tree(self, start):
+        pass
+
+    def get_reachable_iterative(self, start):
+        pass
+
+    def get_reachable_recursive(self, start):
+        pass
