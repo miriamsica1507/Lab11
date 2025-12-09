@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 @dataclass
-class Rifugi:
+class Connessioni:
     id_connessione : int
     id_rifugio_1 : int
     id_rifugio_2 : int

@@ -5,6 +5,8 @@ from database.dao import DAO
 class Model:
     def __init__(self):
         self.G = nx.Graph()
+        self._nodes = None
+        self._edges = None
 
     def build_graph(self, year: int):
         """
@@ -14,13 +16,17 @@ class Model:
         :param year: anno limite fino al quale selezionare le connessioni da includere.
         """
         # TODO
-        rifugi_filtrati = DAO.get_rifugio_anno(year)
         self.G.clear()
-        # devo verificare che i vari nodi che prendo siano uguali o id_rifugio1 o id_rifugio2, con un if e si avrà una connessione
-        for r in rifugi_filtrati:
-            u = r.id_rifugio1
-            v = r.id_rifugio2
-            self.G.add_edge(u, v)
+        self._edges = DAO.get_connessioni()
+        self._nodes = DAO.get_rifugi()
+
+        for edge in self._edges:
+            if edge.anno <= year:
+                r1_object = next((n for n in self._nodes if n.id == edge.id_rifugio_1), None)
+                r2_object = next((n for n in self._nodes if n.id == edge.id_rifugio_2), None)
+                if r1_object and r2_object:
+                    self.G.add_edge(r1_object, r2_object)
+        return self.G
 
 
     def get_nodes(self):
@@ -29,6 +35,7 @@ class Model:
         :return: lista dei rifugi presenti nel grafo.
         """
         # TODO
+        return list(self.G.nodes())
 
     def get_num_neighbors(self, node):
         """
@@ -37,6 +44,7 @@ class Model:
         :return: numero di vicini diretti del nodo indicato
         """
         # TODO
+        return self.G.degree(node)
 
     def get_num_connected_components(self):
         """
@@ -44,6 +52,7 @@ class Model:
         :return: numero di componenti connesse
         """
         # TODO
+        return nx.number_connected_components(self.G)
 
     def get_reachable(self, start):
         """
@@ -61,13 +70,12 @@ class Model:
 
         return a
         """
+        a = self.get_reachable_bfs_tree(start)
+        return a
 
         # TODO
     def get_reachable_bfs_tree(self, start):
-        pass
-
-    def get_reachable_iterative(self, start):
-        pass
-
-    def get_reachable_recursive(self, start):
-        pass
+        T = nx.bfs_tree(self.G, source=start)
+        reachable_list = list(T.nodes())
+        reachable_list.remove(start)
+        return reachable_list
