@@ -71,7 +71,10 @@ class Model:
         return a
         """
         a = self.get_reachable_bfs_tree(start)
-        return a
+        visitato = set()
+        nodi = list(self.G.nodes())
+        b = self.get_reachable_iterative(start, visitato, nodi)
+        return b
 
         # TODO
     def get_reachable_bfs_tree(self, start):
@@ -79,3 +82,17 @@ class Model:
         reachable_list = list(T.nodes())
         reachable_list.remove(start)
         return reachable_list
+
+    def get_reachable_iterative(self, start, visitato, nodi):
+        queue = [start]
+        visitato.add(start)
+        result = []
+
+        while queue:
+            node = queue.pop(0)
+            result.append(node)
+            for neighbor in self.G.neighbors(node):
+                if neighbor not in visitato:
+                    visitato.add(neighbor)
+                    queue.append(neighbor)
+        return result
